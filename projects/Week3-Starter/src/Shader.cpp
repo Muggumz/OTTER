@@ -9,7 +9,7 @@ Shader::Shader() :
 	_fs(0),
 	_handle(0)
 {
-	_handle - glCreateProgram();
+	_handle = glCreateProgram();
 }
 
 Shader::~Shader() {

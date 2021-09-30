@@ -145,10 +145,10 @@ int main() {
 
 	static const float interleaved[] = {
 		// X Y Z R G B
-		 0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
-		 0.5f, 0.5f, 0.5f, 0.3f, 0.2f, 0.5f,
-		-0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f
+		 1.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+		 1.5f, 0.5f, 0.5f, 0.3f, 0.2f, 0.5f,
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f
 	};
 	VertexBuffer* interleaved_vbo = new VertexBuffer();
 	interleaved_vbo->LoadData(interleaved, 6 * 4);
@@ -176,6 +176,11 @@ int main() {
 	shader->LoadShaderPartFromFile("shaders/frag_shader.glsl", ShaderPartType::Fragment);
 	shader->Link();
 
+	Shader* shader2 = new Shader();
+	shader2->LoadShaderPartFromFile("shaders/vertex_shader.glsl", ShaderPartType::Vertex);
+	shader2->LoadShaderPartFromFile("shaders/frag_shader2.glsl", ShaderPartType::Fragment);
+	shader2->Link();
+
 	// GL states
 	glEnable(GL_DEPTH_TEST);
 
@@ -199,6 +204,8 @@ int main() {
 		vao->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		
+		shader2->Bind();
+
 		vao2->Bind();
 		glDrawElements(GL_TRIANGLES, 
 			(GLenum)interleaved_ibo->GetElementCount(), 
@@ -210,6 +217,7 @@ int main() {
 	}
 
 	delete shader;
+	delete shader2;
 	delete vao;
 	delete posVbo;
 	delete color_vbo;
