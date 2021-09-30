@@ -97,55 +97,7 @@ bool initGLAD() {
 	return true;
 }
 
-/* START OF CODE WE CAN REMOVE */
-GLuint shader_program;
 
-bool loadShaders() {
-	// Read Shaders from file
-	std::string vert_shader_str;
-	std::ifstream vs_stream("shaders/vertex_shader.glsl", std::ios::in);
-	if (vs_stream.is_open()) {
-		std::string Line = "";
-		while (getline(vs_stream, Line))
-			vert_shader_str += "\n" + Line;
-		vs_stream.close();
-	}
-	else {
-		printf("Could not open vertex shader!!\n");
-		return false;
-	}
-	const char* vs_str = vert_shader_str.c_str();
-
-	std::string frag_shader_str;
-	std::ifstream fs_stream("shaders/frag_shader.glsl", std::ios::in);
-	if (fs_stream.is_open()) {
-		std::string Line = "";
-		while (getline(fs_stream, Line))
-			frag_shader_str += "\n" + Line;
-		fs_stream.close();
-	}
-	else {
-		printf("Could not open fragment shader!!\n");
-		return false;
-	}
-	const char* fs_str = frag_shader_str.c_str();
-
-	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vs, 1, &vs_str, NULL);
-	glCompileShader(vs);
-	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fs, 1, &fs_str, NULL);
-	glCompileShader(fs);
-
-	shader_program = glCreateProgram();
-	glAttachShader(shader_program, fs);
-	glAttachShader(shader_program, vs);
-	glLinkProgram(shader_program);
-
-	return true;
-}
-
-/* END OF CODE WE CAN REMOVE */
 
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
@@ -174,6 +126,23 @@ int main() {
 		0.0f, 0.0f, 1.0f
 	};
 
+	
+	//VBO - Vertex buffer object
+	VertexBuffer* posVbo = new VertexBuffer();
+	posVbo->LoadData(points, 9);
+
+	VertexBuffer* color_vbo = new VertexBuffer();
+	color_vbo->LoadData(colors, 9);
+
+	VertexArrayObject* vao = new VertexArrayObject();
+	vao->AddVertexBuffer(posVbo, {
+		{ 0, 3, AttributeType::Float, 0, NULL }
+		});
+	vao->AddVertexBuffer(color_vbo, {
+		{ 1, 3, AttributeType::Float, 0, NULL }
+		});
+		
+
 	static const float interleaved[] = {
 		// X Y Z R G B
 		 0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
@@ -188,6 +157,7 @@ int main() {
 		3, 0, 1,
 		3, 1, 2
 	};
+
 	IndexBuffer* interleaved_ibo = new IndexBuffer();
 	interleaved_ibo->LoadData(indices, 3 * 2);
 
@@ -198,22 +168,6 @@ int main() {
 	BufferAttribute(1, 3, AttributeType::Float, stride, sizeof(float) * 3),
 		});
 	vao2->SetIndexBuffer(interleaved_ibo);
-
-
-
-	//VBO - Vertex buffer object
-	VertexBuffer* posVbo = new VertexBuffer();
-	posVbo->LoadData(points, 9);
-	VertexBuffer* color_vbo = new VertexBuffer();
-	color_vbo->LoadData(colors, 9);
-
-	VertexArrayObject* vao = new VertexArrayObject();
-	vao->AddVertexBuffer(posVbo, {
-	 { 0, 3, AttributeType::Float, 0, NULL }
-		});
-	vao->AddVertexBuffer(color_vbo, {
-	 { 1, 3, AttributeType::Float, 0, NULL }
-		});
 
 	// Load our shaders
 

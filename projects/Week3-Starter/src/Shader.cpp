@@ -36,14 +36,19 @@ bool Shader::LoadShaderPart(const char* source, ShaderPartType type)
 		// Get the size of the error log
 		GLint logSize = 0;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &logSize);
+
 		// Create a new character buffer for the log
 		char* log = new char[logSize];
+
 		// Get the log
 		glGetShaderInfoLog(handle, logSize, &logSize, log);
+
 		// Dump error log
 		LOG_ERROR("Failed to compile shader part:\n{}", log);
+
 		// Clean up our log memory
 		delete[] log;
+
 		// Delete the broken shader result
 		glDeleteShader(handle);
 		handle = 0;
@@ -88,6 +93,7 @@ bool Shader::Link()
 	// Attach our two shaders
 	glAttachShader(_handle, _vs);
 	glAttachShader(_handle, _fs);
+
 	// Perform linking
 	glLinkProgram(_handle);
 
