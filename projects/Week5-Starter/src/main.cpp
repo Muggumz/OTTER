@@ -156,20 +156,28 @@ int main() {
 	int score = 0; // for box score down the road
 	bool respawn = true; // setup condition for making the player launch the ball at start
 
-	int ballx = 0.0f;
-	int bally = 0.0f;
-	int ballz = 0.0f;
+	// the balls current pos relative to axis
+	float ballx = 0.0f;
+	float bally = 0.0f;
+	float ballz = 0.0f;
 
-	int ballvelx = 0.0f;
-	int ballvely = 0.0f;
-	int ballvelz = 0.0f;
+	// the balls velocity relative to axis
+	float ballvelx = 0.0f;
+	float ballvely = 0.0f;
+	float ballvelz = 0.0f;
+
+	bool box1destroyed = false; //bool condition for destroying the box
+
+	//debug items
+	bool test1 = false;
+	bool test2 = true;
 
 	bool isMoving = true;
 	bool isButtonPressed = false;
 
 	GLfloat paddleX = 0.0f;
 
-	///////////////
+	/////////////////////////// Camera and Shaders //////////////////////////////////
 	/*
 	static const float interleaved[] = {
 		// X      Y    Z       R     G     B
@@ -307,13 +315,32 @@ int main() {
 			paddle = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 0.0f, 0.0f));
 		}
 
+		//////////////////////// Ball Movement ////////////////////////////////
+
+
 		if (respawn == true) {
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
 		}
 		else
 		{
-			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx - dt*ballvelx, bally - dt*ballvely, ballz - dt*ballvelz));
+			ballx -= ballvelx/50;
+			bally -= ballvely/50;
+			ballz -= ballvelz/50;
+			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx, bally, ballz));
 		}
+		
+		//// respawn condition and code
+		if (bally > 2.0f)
+		{
+			respawn = true;
+			lives -= 1;
+
+			ballvelx = 0;
+			ballvely = 0;
+			ballvelz = 0;
+			ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
+		}
+
 		
 		
 		//transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
@@ -341,9 +368,28 @@ int main() {
 		vao4->Draw();
 
 		VertexArrayObject::Unbind(); 
+		
+		
+		////// Box destory code
+		///// let it be known, i fucking hate this syntax
+		///// this was very bruh for 2 hours and like 4 lines of code
+		/////curse you coding grammer
 
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* box1);
-		vao5->Draw();
+		if (box1destroyed != true)
+		{
+			if (((0.5 > ballx + 0.125 && ballx + 0.125 > -0.5) || (0.5 > ballx - 0.125 && ballx - 0.125 > -0.5)) && ((-1.5 > bally - 0.125 && bally - 0.125 > -2.5) || (-1.5 > bally + 0.125 && bally + 0.125 > 2.5)))
+			{
+				box1destroyed = true;
+			}
+			else
+			{
+				shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* box1);
+				vao5->Draw();
+			}
+				
+		}
+	
+		std::cout << test1 << std::endl;
 
 		/*
 		// Draw OBJ loaded model
@@ -352,10 +398,16 @@ int main() {
 		*/
 		VertexArrayObject::Unbind();
 
+		//checking DT viability
+		//std::cout << dt << std::endl;
+
 		glfwSwapBuffers(window);
 	}
+
+
 
 	// Clean up the toolkit logger so we don't leak memory
 	Logger::Uninitialize();
 	return 0;
 }
+
