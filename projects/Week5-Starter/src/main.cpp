@@ -118,7 +118,7 @@ int main() {
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GlDebugMessage, nullptr);
-
+	/*
 	static const GLfloat points[] = {
 		-0.5f, -0.5f, 0.5f,
 		0.5f, -0.5f, 0.5f,
@@ -145,7 +145,7 @@ int main() {
 	vao->AddVertexBuffer(color_vbo, {
 		{ 1, 3, AttributeType::Float, 0, NULL, AttribUsage::Color }
 	});
-
+	*/
 	static const float interleaved[] = {
 		// X      Y    Z       R     G     B
 		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 0.0f,
@@ -185,12 +185,12 @@ int main() {
 
 	// Get uniform location for the model view projection
 	Camera::Sptr camera = Camera::Create();
-	camera->SetPosition(glm::vec3(0, 3, 3));
+	camera->SetPosition(glm::vec3(0, 0, 5));
 	camera->LookAt(glm::vec3(0.0f));
 
 	// Create a mat4 to store our mvp (for now)
 	glm::mat4 transform = glm::mat4(1.0f);
-	glm::mat4 transform2 = glm::mat4(1.0f);
+	glm::mat4 paddle = glm::mat4(1.0f);
 	glm::mat4 transform3 = glm::mat4(1.0f);
 
 	// Our high-precision timer
@@ -199,32 +199,47 @@ int main() {
 	LOG_INFO("Starting mesh build");
 
 	MeshBuilder<VertexPosCol> mesh;
-	MeshFactory::AddIcoSphere(mesh, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.5f), 3);
-	MeshFactory::AddCube(mesh, glm::vec3(0.0f), glm::vec3(0.5f));
+	MeshFactory::AddCube(mesh, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(3.0f,0.5f, 0.5f));
 	VertexArrayObject::Sptr vao3 = mesh.Bake();
 
-	VertexArrayObject::Sptr vao4 = ObjLoader::LoadFromFile("Monkey.obj");
-
-	bool isRotating = true;
+	bool isMoving = true;
 
 	bool isButtonPressed = false;
-
+	
+	GLfloat paddleX = 0.0f;
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
 		// WEEK 5: Input handling
-		if (glfwGetKey(window, GLFW_KEY_W)) {
-			if (!isButtonPressed) {
+		if (glfwGetKey(window, GLFW_KEY_A)) {
+			
+			if (!isButtonPressed == true) {
 				// This is the action we want to perform on key press
-				isRotating = !isRotating;
+				isMoving = !isMoving;
+				paddleX += .1f;
 			}
-			isButtonPressed = true;
+			//isButtonPressed = true;
 		}
 		else {
-			isButtonPressed = false;
+			//isButtonPressed = false;
+			
 		}
+		
+		if (glfwGetKey(window, GLFW_KEY_D)) {
 
+			if (!isButtonPressed == true) {
+				// This is the action we want to perform on key press
+				isMoving = !isMoving;
+				paddleX -= 0.1f;
+			}
+			//isButtonPressed = true;
+		}
+		else {
+			//isButtonPressed = false;
+
+		}
+		
 
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
@@ -233,30 +248,34 @@ int main() {
 		// TODO: Week 5 - toggle code
 
 		// Rotate our models around the z axis
-		if (isRotating) {
-			transform  = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
+		
+		if (isMoving) {
+			//transform  = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
+			paddle = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 0.0f, 0.0f));
 		}
-		transform2 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(0, 0, 1)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));
+		
+		
 		transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
-
+		
 		// Clear the color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Bind our shader and upload the uniform
 		shader->Bind();
-
+		/*
 		// Draw spinny triangle
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform);
 		vao->Draw();
-
+		*/
 		// Draw MeshFactory Sample
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform2);
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* paddle);
 		vao3->Draw();
 
+		/*
 		// Draw OBJ loaded model
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform3);
 		vao4->Draw();
-
+		*/
 		VertexArrayObject::Unbind();
 
 		glfwSwapBuffers(window);
