@@ -62,7 +62,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "Nicholas Gauthier - 100754586";
+std::string windowTitle = "Midterm Project";
 
 void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -146,6 +146,31 @@ int main() {
 		{ 1, 3, AttributeType::Float, 0, NULL, AttribUsage::Color }
 	});
 	*/
+	
+
+	///////////////Odd Definitions
+
+	// ie. int a = 5 or something
+
+	int lives = 3; // for ball count down the road
+	int score = 0; // for box score down the road
+	bool respawn = true; // setup condition for making the player launch the ball at start
+
+	int ballx = 0.0f;
+	int bally = 0.0f;
+	int ballz = 0.0f;
+
+	int ballvelx = 0.0f;
+	int ballvely = 0.0f;
+	int ballvelz = 0.0f;
+
+	bool isMoving = true;
+	bool isButtonPressed = false;
+
+	GLfloat paddleX = 0.0f;
+
+	///////////////
+	/*
 	static const float interleaved[] = {
 		// X      Y    Z       R     G     B
 		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 0.0f,
@@ -170,6 +195,7 @@ int main() {
 		BufferAttribute(1, 3, AttributeType::Float, stride, sizeof(float) * 3, AttribUsage::Color),
 	});
 	vao2->SetIndexBuffer(interleaved_ibo);
+	*/
 
 	// Load our shaders
 	Shader* shader = new Shader();
@@ -187,27 +213,40 @@ int main() {
 	Camera::Sptr camera = Camera::Create();
 	camera->SetPosition(glm::vec3(0, 0, 5));
 	camera->LookAt(glm::vec3(0.0f));
+	
+	//////////////////////////////////////////////////////The Place we Make objects/////////////////////////////////////
+
 
 	// Create a mat4 to store our mvp (for now)
-	glm::mat4 transform = glm::mat4(1.0f);
+	//glm::mat4 transform = glm::mat4(1.0f);
 	glm::mat4 paddle = glm::mat4(1.0f);
-	glm::mat4 transform3 = glm::mat4(1.0f);
+	//glm::mat4 transform3 = glm::mat4(1.0f);
+	glm::mat4 ball = glm::mat4(1.0f);
+	glm::mat4 box1 = glm::mat4(1.0f);
 
 	// Our high-precision timer
 	double lastFrame = glfwGetTime();
 
 	LOG_INFO("Starting mesh build");
 
+	
+
 	MeshBuilder<VertexPosCol> mesh;
 	MeshFactory::AddCube(mesh, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(3.0f,0.5f, 0.5f));
 	VertexArrayObject::Sptr vao3 = mesh.Bake();
 
-	bool isMoving = true;
+	MeshBuilder<VertexPosCol> mesh2;
+	MeshFactory::AddCube(mesh, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	VertexArrayObject::Sptr vao4 = mesh.Bake();
 
-	bool isButtonPressed = false;
+	MeshBuilder<VertexPosCol> mesh3;
+	MeshFactory::AddCube(mesh, glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	VertexArrayObject::Sptr vao5 = mesh.Bake();
+
+	/// //////////////
 	
-	GLfloat paddleX = 0.0f;
-	///// Game loop /////
+
+	/////////////////////////////////////////////////// Game loop ///////////////////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
@@ -240,6 +279,20 @@ int main() {
 
 		}
 		
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			if (!isButtonPressed == true && respawn == true) {
+				respawn = false;
+				ballvelx = 0.0f;
+				ballvely = 1.0f;
+				ballvelz = 0.0f;
+				ballx = paddleX;
+				bally = 0.1f;
+			}
+			//isButtonPressed = true
+		}
+		else {
+			//isButtonPressed = false;
+		}
 
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
@@ -253,9 +306,17 @@ int main() {
 			//transform  = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
 			paddle = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 0.0f, 0.0f));
 		}
+
+		if (respawn == true) {
+			ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
+		}
+		else
+		{
+			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx - dt*ballvelx, bally - dt*ballvely, ballz - dt*ballvelz));
+		}
 		
 		
-		transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
+		//transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
 		
 		// Clear the color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -268,8 +329,21 @@ int main() {
 		vao->Draw();
 		*/
 		// Draw MeshFactory Sample
+
+																								// bug with this part. Making a new object loads a copy of all the old objects already made. 
+																								// I guess it needs to maybe clear the old creations but idk how we do that
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* paddle);
 		vao3->Draw();
+
+		VertexArrayObject::Unbind();
+
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* ball);
+		vao4->Draw();
+
+		VertexArrayObject::Unbind(); 
+
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* box1);
+		vao5->Draw();
 
 		/*
 		// Draw OBJ loaded model
