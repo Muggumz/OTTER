@@ -354,7 +354,7 @@ int main() {
 	GLfloat paddleX = 0.0f;
 
 	/////////////////////////// Camera and Shaders //////////////////////////////////
-	/*
+	
 	static const float interleaved[] = {
 		// X      Y    Z       R     G     B
 		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 0.0f,
@@ -379,7 +379,7 @@ int main() {
 		BufferAttribute(1, 3, AttributeType::Float, stride, sizeof(float) * 3, AttribUsage::Color),
 	});
 	vao2->SetIndexBuffer(interleaved_ibo);
-	*/
+	
 
 	//Texture 0
 	
@@ -408,6 +408,7 @@ int main() {
 	glm::mat4 paddle = glm::mat4(1.0f);
 	//glm::mat4 transform3 = glm::mat4(1.0f);
 	glm::mat4 ball = glm::mat4(1.0f);
+	glm::mat4 test = glm::mat4(1.0f);
 
 	///////////////////////BOXES//////////////////
 	glm::mat4 boxes[16];
@@ -840,6 +841,12 @@ int main() {
 		*/
 		VertexArrayObject::Unbind();
 		
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* test);
+		vao2->Bind();
+		glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), (GLenum)interleaved_ibo->GetElementType(), nullptr);
+
+		VertexArrayObject::Unbind();
+
 
 		//////////////////////////////////Debug Testing Zone
 
