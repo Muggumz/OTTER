@@ -843,7 +843,7 @@ int main() {
 
 		//////////////////////////////////Debug Testing Zone
 
-		std::cout << score << std::endl;
+		//std::cout << score << std::endl;
 		//std::cout << ballYTop << std::endl;
 
 		//std::cout << boxCoords[9].y << std::endl;

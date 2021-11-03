@@ -6,6 +6,17 @@
 #include <GLM/glm.hpp> // Lec 04
 #include <GLM/gtc/matrix_transform.hpp> //lec 04
 
+#include "Utils/MeshBuilder.h"
+#include "Utils/MeshFactory.h"
+
+#include "IndexBuffer.h"
+#include "VertexArrayObject.h"
+#include "VertexBuffer.h"
+#include "Shader.h"
+#include "VertexTypes.h"
+
+#include <math.h>
+
 // Lecture 07 ///////////////////
 // Load textures (images)
 // Load UVs into VBO, send to GPU
@@ -34,6 +45,15 @@ void loadImage(const std::string& filename) {
 
 
 GLFWwindow* window;
+// The current size of our window in pixels
+glm::ivec2 windowSize = glm::ivec2(800, 800);
+// The title of our GLFW window
+std::string windowTitle = "Midterm Project";
+
+void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
+	windowSize = glm::ivec2(width, height);
+}
 
 bool initGLFW() {
 	if (glfwInit() == GLFW_FALSE) {
@@ -103,26 +123,6 @@ bool loadShaders() {
 	return true;
 }
 
-
-//// Lecture 04
-
-GLfloat rotY = 0.0f;
-GLfloat rotX = 0.0f;
-
-void keyboard() {
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		rotY += 0.5f;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		rotY -= 0.5f;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		rotX -= 0.5f;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		rotX += 0.5f;
-}
-
-///////////////
-
-
 int main() {
 
 	//Initialize GLFW
@@ -132,6 +132,44 @@ int main() {
 	//Initialize GLAD
 	if (!initGLAD())
 		return 1;
+
+	///////////////////////////////////////////////////////////////////////////////////Odd Definitions
+
+	// ie. int a = 5 or something
+
+	int lives = 3; // for ball count down the road
+	int score = 0; // for box score down the road
+	bool respawn = true; // setup condition for making the player launch the ball at start
+
+	// the balls current pos relative to axis
+	float ballx = 0.0f;
+	float bally = 0.0f;
+	float ballz = 0.0f;
+
+	// the balls velocity relative to axis
+	float ballvelx = 0.0f;
+	float ballvely = 0.0f;
+	float ballvelz = 0.0f;
+
+	bool collision = false;
+
+	bool boxdestroyed[16]; //bool condition for destroying the box
+	bool boxdamaged[16];
+
+	for (int counter = 0; counter < 16; counter++) {
+		boxdestroyed[counter] = false;
+		boxdamaged[counter] = false;
+	}
+
+	//debug items
+	bool test1 = false;
+	bool test2 = true;
+
+	bool isMoving = true;
+	bool isButtonPressed = false;
+
+	GLfloat paddleX = 0.0f;
+	///////////////////////////////////////////////////////////////////////////////////////
 
 	//// Lecture 3 starts here
 
@@ -278,6 +316,7 @@ int main() {
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(3);
 
+	/*																					// currently not in use or set up
 	loadImage("box.bmp");
 
 	GLuint textureHandle;
@@ -291,11 +330,12 @@ int main() {
 
 	//free image space
 	stbi_image_free(image);
+	*/
 
 	//////////////////////// 07
 	//// hands on lec 7
 
-	loadImage("checker.jpg");
+	loadImage("metalBox.jpg");
 
 	GLuint texture2Handle;
 	glGenTextures(1, &texture2Handle);
@@ -329,15 +369,28 @@ int main() {
 	// View matrix - Camera
 
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(0, 0, 3), // camera position
+		glm::vec3(0, 0, 5), // camera position
 		glm::vec3(0, 0, 0), //target
 		glm::vec3(0, 1, 0) //up vector
 	);
 
+	//////////////////////////////////////////////////////The Place we Make objects/////////////////////////////////////
+
 	// Model matrix
 	glm::mat4 Model = glm::mat4(1.0f);//Identity matrix - resets your matrix
-	
 	glm::mat4 mvp;// = Projection * View * Model;
+
+	glm::mat4 paddle = glm::mat4(1.0f);
+	glm::mat4 ball = glm::mat4(1.0f);
+	glm::mat4 Walls = glm::mat4(1.0f);
+
+	///////////////////////BOXES//////////////////
+	glm::mat4 boxes[16];
+
+	for (int counter = 0; counter < 16; counter++) {
+		boxes[counter] = glm::mat4(1.0f);
+	}
+	/////////////////////////////////////////////
 
 	// Handle for our mvp
 	GLuint matrixMVP = glGetUniformLocation(shader_program, "MVP");
@@ -348,6 +401,81 @@ int main() {
 	GLuint cameraPosID = glGetUniformLocation(shader_program, "cameraPos");
 	////////////////////////////////
 	
+	// Our high-precision timer
+	double lastFrame = glfwGetTime();
+
+	//LOG_INFO("Starting mesh build");
+
+	//MeshBuilder<VertexPosCol> paddleMesh;
+	//MeshFactory::AddCube(paddleMesh, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(3.0f, 0.5f, 0.5f));
+	//VertexArrayObject::Sptr paddleVAO = paddleMesh.Bake();
+
+	//MeshBuilder<VertexPosCol> ballMesh;
+	//MeshFactory::AddCube(ballMesh, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	//VertexArrayObject::Sptr ballVAO = ballMesh.Bake();
+
+	//////////////////////////////// BOXES ///////////////////////////////
+	/* Box Map  (bracket is how many hits to destroy)
+
+			[box0(2)]		[box1(1)]		[box2(2)]		[box3(1)]		[box4(2)]
+
+					[box5(1)]		[box6(1)]		[box7(1)]    [box8(1)]
+
+			[box9(1)]		[box10(2)]		[box11(1)]		[box12(2)]		[box13(1)]
+
+									[box14(2)]		[box15(2)]
+
+
+	*/
+
+	MeshBuilder<VertexPosCol> boxMesh[16];
+
+	glm::vec3 boxCoords[16];
+
+	boxCoords[0] = glm::vec3(4.0f, 5.0f, 0.0f);
+	boxCoords[1] = glm::vec3(2.0f, 5.0f, 0.0f);
+	boxCoords[2] = glm::vec3(0.0f, 5.0f, 0.0f);
+	boxCoords[3] = glm::vec3(-2.0f, 5.0f, 0.0f);
+	boxCoords[4] = glm::vec3(-4.0f, 5.0f, 0.0f);
+
+	boxCoords[5] = glm::vec3(3.0f, 4.0f, 0.0f);
+	boxCoords[6] = glm::vec3(1.0f, 4.0f, 0.0f);
+	boxCoords[7] = glm::vec3(-1.0f, 4.0f, 0.0f);
+	boxCoords[8] = glm::vec3(-3.0f, 4.0f, 0.0f);
+
+	boxCoords[9] = glm::vec3(4.0f, 3.0f, 0.0f);
+	boxCoords[10] = glm::vec3(2.0f, 3.0f, 0.0f);
+	boxCoords[11] = glm::vec3(0.0f, 3.0f, 0.0f);
+	boxCoords[12] = glm::vec3(-2.0f, 3.0f, 0.0f);
+	boxCoords[13] = glm::vec3(-4.0f, 3.0f, 0.0f);
+
+	boxCoords[14] = glm::vec3(1.0f, 2.0f, 0.0f);
+	boxCoords[15] = glm::vec3(-1.0f, -.0f, 0.0f);
+
+	VertexArrayObject::Sptr boxVAO[16];
+
+	//for (int counter = 0; counter < 16; counter++) {
+	//	MeshFactory::AddCube(boxMesh[counter], boxCoords[counter], glm::vec3(1.75f, 0.5f, 0.1f));
+
+	//	boxVAO[counter] = boxMesh[counter].Bake();
+	//}
+	/////////////////////////////// WALLS ////////////////////////////////
+
+//	MeshBuilder<VertexPosCol> leftWallMesh;
+//	MeshFactory::AddCube(leftWallMesh, glm::vec3(7.0f, 0.0f, 0.0f), glm::vec3(0.5f, 15.0f, 0.5f));
+//	VertexArrayObject::Sptr leftWallVAO = leftWallMesh.Bake();
+
+//	MeshBuilder<VertexPosCol> rightWallMesh;
+//	MeshFactory::AddCube(rightWallMesh, glm::vec3(-7.0f, 0.0f, 0.0f), glm::vec3(0.5f, 15.0f, 0.5f));
+//	VertexArrayObject::Sptr rightWallVAO = rightWallMesh.Bake();
+
+//	MeshBuilder<VertexPosCol> ceilingMesh;
+//	MeshFactory::AddCube(ceilingMesh, glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(15.0f, 0.5f, 0.5f));
+//	VertexArrayObject::Sptr ceilingVAO = ceilingMesh.Bake();
+
+
+	/////////////////
+
 	// GL states
 	glEnable(GL_DEPTH_TEST);
 	// LEC 05
@@ -358,7 +486,7 @@ int main() {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-	///// Game loop /////
+	/////////////////////////////////////////////////// Game loop ///////////////////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
@@ -368,13 +496,11 @@ int main() {
 		glUseProgram(shader_program);
 		
 		////////// Lecture 04								 X,    Y,    Z	
-		Model = glm::mat4(1.0f); // reset Model
+		//Model = glm::mat4(1.0f); // reset Model
 
-		keyboard();
+		
 
 		//Model = glm::translate(Model, glm::vec3(0.0f, 0.0f, movZ));
-		Model = glm::rotate(Model, glm::radians(rotY), glm::vec3(0.0f, 1.0f, 0.0f));
-		Model = glm::rotate(Model, glm::radians(rotX), glm::vec3(1.0f, 0.0f, 0.0f));
 		mvp = Projection * View * Model;
 		
 		// Send mvp to GPU
