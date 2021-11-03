@@ -26,6 +26,7 @@
 #include <windows.h>
 
 #include <string>
+#include <math.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -333,6 +334,8 @@ int main() {
 	float ballvely = 0.0f;
 	float ballvelz = 0.0f;
 
+	bool collision = false;
+
 	bool boxdestroyed[16]; //bool condition for destroying the box
 	bool boxdamaged[16]; 
 
@@ -541,7 +544,7 @@ int main() {
 				ballvely = 1.0f;
 				ballvelz = 0.0f;
 				ballx = paddleX;
-				bally = 0.1f;
+				bally = 2.5f;
 			}
 			//isButtonPressed = true
 		}
@@ -555,10 +558,10 @@ int main() {
 			if (!isButtonPressed == true) {
 				// This is the action we want to perform on key press
 				ballvelx = 0.0f;
-				ballvely = 1.0f;
+				ballvely = 2.0f;
 				ballvelz = 0.0f;
 				ballx = paddleX;
-				bally = 0.1f;
+				bally = 2.5f;
 			}
 			//isButtonPressed = true;
 		}
@@ -589,14 +592,22 @@ int main() {
 		}
 		else
 		{
-			ballx -= ballvelx/50;
-			bally -= ballvely/50;
-			ballz -= ballvelz/50;
+			ballx -= ballvelx/25;
+			bally -= ballvely/25;
+			ballz -= ballvelz/25;
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx, bally, ballz));
 		}
+					///////collision pass 1
+		/*
+		if (collision == true) {
+			ballvelx *= -1;
+			ballvely *= -1;
+			collision = false;
+		}
+		*/
 		
 		//// respawn condition and code
-		if (bally > 2.0f)
+		if (bally > 8.0f)
 		{
 			respawn = true;
 			lives -= 1;
@@ -638,8 +649,7 @@ int main() {
 		*/
 		// Draw MeshFactory Sample
 
-																								// bug with this part. Making a new object loads a copy of all the old objects already made. 
-																								// I guess it needs to maybe clear the old creations but idk how we do that
+																								
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* paddle);
 		paddleVAO->Draw();
 
@@ -664,16 +674,18 @@ int main() {
 		ceilingVAO->Draw();
 		VertexArrayObject::Unbind();
 		/////////////////////////////////////
-		
-		//Hola Hola, as you see here I have made what I think would work as a "damaged block" system, as I have 2 bools, one indicating damaged and one indicating destroyed.  
-		//Problem is that the ball is in the hitbox of the ball for more than one frame, so it's instantly wombo combo'd for the double hit and then destroyed anyways, so I think this needs to be revisted once
-		//we figure out bouncing and get the hitboxes sitting right on the boxes.  Also side note there is obviosulyl no textures so if it was to work, it would appear that nothing happened to the box after the first hit,
-		//and then it just gets distroyed after the second
+
+		//Yo mon ami, it would appear that the ball does not quite visually match where it actually is in code, that or the blocks do not. I've adjusted some code in the back end.
+		//This way the ball believes it is elsewhere to match the boxes being straaangely out of place. Im thinking the boxes may be the strange ones in this scenario.
+		//Either way it looks much better now.
+		////Boxes can have two lives but they currently have no texture or model and are thus invisibruh, however they currently generate a texture at box[0] (since thats what they do)
 		
 		float ballXLeft = ballx + 0.25;
 		float ballXRight = ballx - 0.25;
-		float ballYTop = bally - 0.25;
-		float ballYBottom = bally + 0.25;
+		float ballYTop = bally + 1.75f;
+		float ballYBottom = bally + 1.5f;
+
+		/////////////////////////////////////////////////// Box Physics
 
 		for (int counter = 0; counter < 16; counter++) {
 			
@@ -681,12 +693,25 @@ int main() {
 				// Normal box (destroys in one hit)
 				if (boxdestroyed[counter] != true)
 				{
-					if ((ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top left corner in brick
-						|| (ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25) //Bottom left Corner in brick
-						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top right corner in brick
-						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
+					if (((ballXLeft > boxCoords[counter].x - 0.875) && (ballXLeft < boxCoords[counter].x + 0.875) && (ballYTop > boxCoords[counter].y - 0.25) && (ballYTop < boxCoords[counter].y + 0.25)) //Top left corner in brick
+						|| ((ballXLeft > boxCoords[counter].x - 0.875) && (ballXLeft < boxCoords[counter].x + 0.875) && (ballYBottom > boxCoords[counter].y - 0.25) && (ballYBottom < boxCoords[counter].y + 0.25)) //Bottom left Corner in brick
+						|| ((ballXRight > boxCoords[counter].x - 0.875) && (ballXRight < boxCoords[counter].x + 0.875) && (ballYTop > boxCoords[counter].y - 0.25) && (ballYTop < boxCoords[counter].y + 0.25)) //Top right corner in brick
+						|| ((ballXRight > boxCoords[counter].x - 0.875) && (ballXRight < boxCoords[counter].x + 0.875) && (ballYBottom > boxCoords[counter].y - 0.25) && (ballYBottom < boxCoords[counter].y + 0.25))) //Bottom right Corner in brick
 					{
 						boxdestroyed[counter] = true;
+						//collision = true;
+						score += 100;
+
+						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
+						{
+							ballvelx *= -1.0f;
+						}
+
+						if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
+						{
+							ballvely *= -1.0f;
+						}
+
 					}
 					else
 					{
@@ -706,10 +731,23 @@ int main() {
 						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
 					{
 						boxdamaged[counter] = true;
+						score += 100;
+						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
+						{
+							ballvelx *= -1.0f;
+						}
 
+						if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
+						{
+							ballvely *= -1.0f;
+						}
+
+
+						/*
 						//draw damaged box
 						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
 						boxVAO[counter]->Draw();
+						*/
 					}
 					else
 					{
@@ -725,11 +763,23 @@ int main() {
 					if ((ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top left corner in brick
 						|| (ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25) //Bottom left Corner in brick
 						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top right corner in brick
-						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y- 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
 					{
 						boxdestroyed[counter] = true;
 						score += 100;
 						//don't draw box as it is destroyed
+						//collision = true;
+
+						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
+						{
+							ballvelx *= -1.0f;
+						}
+
+						if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
+						{
+							ballvely *= -1.0f;
+						}
+
 					}
 					else
 					{
@@ -749,7 +799,39 @@ int main() {
 			}
 			*/
 		}
-		std::cout << test1 << std::endl;
+		
+		////////////////////////// Paddle Physics
+
+
+		if (respawn != true)
+		{
+			if ( (ballx > paddleX - 1.5f) && (ballx < paddleX + 1.5f) && (bally + 0.25f > 3.0f) && (bally - 0.25f < 3.0f) )
+			{
+				ballvely *= -1.0f;
+
+				if (ballx > paddleX)
+				{
+					ballvelx = -1 * (ballx - paddleX);
+				}
+				else if (ballx < paddleX)
+				{
+					ballvelx = -1 * (ballx - paddleX);
+				}
+
+			}
+		}
+
+		if (respawn != true)
+		{
+			if ((ballx > 6.75f) || (ballx < -6.75f))
+			{
+				ballvelx *= -1.0f;
+			}
+			else if (bally < -8.0f)
+			{
+				ballvely *= -1.0f;
+			}
+		}
 
 		/*
 		// Draw OBJ loaded model
@@ -757,10 +839,16 @@ int main() {
 		vao4->Draw();
 		*/
 		VertexArrayObject::Unbind();
+		
 
-		//checking DT viability
-		//std::cout << dt << std::endl;
+		//////////////////////////////////Debug Testing Zone
 
+		std::cout << score << std::endl;
+		//std::cout << ballYTop << std::endl;
+
+		//std::cout << boxCoords[9].y << std::endl;
+
+		///////////////////////////////////////
 		////// Bind texture 1
 		glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
 		///// draw 
