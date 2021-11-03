@@ -320,7 +320,7 @@ int main() {
 
 	// ie. int a = 5 or something
 
-	int lives = 3; // for ball count down the road
+	int lives = 6; // for ball count down the road
 	int score = 0; // for box score down the road
 	bool respawn = true; // setup condition for making the player launch the ball at start
 
@@ -410,6 +410,13 @@ int main() {
 	glm::mat4 ball = glm::mat4(1.0f);
 	glm::mat4 test = glm::mat4(1.0f);
 
+
+	glm::mat4 life[3];
+
+	for (int counter = 0; counter < 3; counter++) {
+		life[counter] = glm::mat4(1.0f);
+	}
+
 	///////////////////////BOXES//////////////////
 	glm::mat4 boxes[16];
 
@@ -420,12 +427,24 @@ int main() {
 
 	glm::mat4 Walls = glm::mat4(1.0f);
 
+	////////////////// NUMBERS ////////////////////
+	glm::mat4 one[2] = { glm::mat4(1.0f), glm::mat4(1.0f) };
+
+	glm::mat4 two = glm::mat4(1.0f);
+	glm::mat4 three = glm::mat4(1.0f);
+	glm::mat4 four = glm::mat4(1.0f);
+	glm::mat4 five = glm::mat4(1.0f);
+	glm::mat4 six = glm::mat4(1.0f);
+	glm::mat4 seven = glm::mat4(1.0f);
+	glm::mat4 eight = glm::mat4(1.0f);
+	glm::mat4 nine = glm::mat4(1.0f);
+	glm::mat4 zero = glm::mat4(1.0f);
+	//////////////////////////////////////////////
+
 	// Our high-precision timer
 	double lastFrame = glfwGetTime();
 
 	LOG_INFO("Starting mesh build");
-
-	
 
 	MeshBuilder<VertexPosCol> paddleMesh;
 	MeshFactory::AddCube(paddleMesh, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(3.0f,0.5f, 0.5f));
@@ -435,9 +454,6 @@ int main() {
 	MeshFactory::AddCube(ballMesh, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 	VertexArrayObject::Sptr ballVAO = ballMesh.Bake();
 	
-
-
-
 
 	//////////////////////////////// BOXES ///////////////////////////////
 	/* Box Map  (bracket is how many hits to destroy)
@@ -499,9 +515,164 @@ int main() {
 	VertexArrayObject::Sptr ceilingVAO = ceilingMesh.Bake();
 
 	
-	/////////////////
-	
+	//////////////////////////// Life Tokens //////////////////////////////
+	MeshBuilder<VertexPosCol> lifeMesh[3];
 
+	glm::vec3 lifeCoords[3];
+
+	lifeCoords[0] = glm::vec3(5.5f, 6.0f, 0.0f);
+	lifeCoords[1] = glm::vec3(4.75f, 6.0f, 0.0f);
+	lifeCoords[2] = glm::vec3(4.0f, 6.0f, 0.0f);
+
+	VertexArrayObject::Sptr lifeVAO[3];
+
+	for (int counter = 0; counter < 3; counter++) {
+		MeshFactory::AddCube(lifeMesh[counter], lifeCoords[counter], glm::vec3(0.5f, 0.5f, 0.1f));
+
+		lifeVAO[counter] = lifeMesh[counter].Bake();
+	}
+	/////////////////////////////////// NUMBERS ///////////////////////////////////////////
+	////////// 1/10-16 //////////
+	MeshBuilder<VertexPosCol> oneMesh[2];
+
+	glm::vec3 oneCoords[2];
+
+	oneCoords[0] = glm::vec3(-5.8f, 6.1f, 0.0f);
+	oneCoords[1] = glm::vec3(-5.f, 6.1f, 0.0f);
+
+	VertexArrayObject::Sptr oneVAO[2];
+	for (int counter = 0; counter < 2; counter++) {
+		MeshFactory::AddCube(oneMesh[counter], oneCoords[counter], glm::vec3(0.17f, 1.f, 0.1f));
+		oneVAO[counter] = oneMesh[counter].Bake();
+	}
+	////////// 2 //////////
+	MeshBuilder<VertexPosCol> twoMesh[5];
+	glm::vec3 twoCoords[5];
+	VertexArrayObject::Sptr twoVAO[5];
+
+	MeshFactory::AddCube(twoMesh[0], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(twoMesh[1], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(twoMesh[2], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(twoMesh[3], glm::vec3(-5.64f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(twoMesh[4], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+
+	for (int counter = 0; counter < 5; counter++) {
+		twoVAO[counter] = twoMesh[counter].Bake();
+	}
+	////////// 3 //////////
+	MeshBuilder<VertexPosCol> threeMesh[5];
+	glm::vec3 threeCoords[5];
+	VertexArrayObject::Sptr threeVAO[5];
+
+	MeshFactory::AddCube(threeMesh[0], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(threeMesh[1], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(threeMesh[2], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(threeMesh[3], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(threeMesh[4], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 5; counter++) {
+		threeVAO[counter] = threeMesh[counter].Bake();
+	}
+	////////// 4 //////////
+	MeshBuilder<VertexPosCol> fourMesh[4];
+	glm::vec3 fourCoords[4];
+	VertexArrayObject::Sptr fourVAO[4];
+
+	MeshFactory::AddCube(fourMesh[0], glm::vec3(-5.64f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(fourMesh[1], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(fourMesh[2], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(fourMesh[3], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 4; counter++) {
+		fourVAO[counter] = fourMesh[counter].Bake();
+	}
+	////////// 5 //////////
+	MeshBuilder<VertexPosCol> fiveMesh[5];
+	glm::vec3 fiveCoords[5];
+	VertexArrayObject::Sptr fiveVAO[5];
+
+	MeshFactory::AddCube(fiveMesh[0], glm::vec3(-5.64f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(fiveMesh[1], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(fiveMesh[2], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(fiveMesh[3], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(fiveMesh[4], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 5; counter++) {
+		fiveVAO[counter] = fiveMesh[counter].Bake();
+	}
+	////////// 6 //////////
+	MeshBuilder<VertexPosCol> sixMesh[6];
+	glm::vec3 sixCoords[6];
+	VertexArrayObject::Sptr sixVAO[6];
+
+	MeshFactory::AddCube(sixMesh[0], glm::vec3(-5.64f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(sixMesh[1], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(sixMesh[2], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(sixMesh[3], glm::vec3(-5.64f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(sixMesh[4], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(sixMesh[5], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 6; counter++) {
+		sixVAO[counter] = sixMesh[counter].Bake();
+	}
+	////////// 7 //////////
+	MeshBuilder<VertexPosCol> sevenMesh[3];
+	glm::vec3 sevenCoords[3];
+	VertexArrayObject::Sptr sevenVAO[3];
+
+	MeshFactory::AddCube(sevenMesh[0], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(sevenMesh[1], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(sevenMesh[2], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 3; counter++) {
+		sevenVAO[counter] = sevenMesh[counter].Bake();
+	}
+	////////// 8 //////////
+	MeshBuilder<VertexPosCol> eightMesh[7];
+	glm::vec3 eightCoords[7];
+	VertexArrayObject::Sptr eightVAO[7];
+
+	MeshFactory::AddCube(eightMesh[0], glm::vec3(-5.64f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(eightMesh[1], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(eightMesh[2], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(eightMesh[3], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(eightMesh[4], glm::vec3(-5.64f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(eightMesh[5], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(eightMesh[6], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 7; counter++) {
+		eightVAO[counter] = eightMesh[counter].Bake();
+	}
+	////////// 9 //////////
+	MeshBuilder<VertexPosCol> nineMesh[6];
+	glm::vec3 nineCoords[6];
+	VertexArrayObject::Sptr nineVAO[6];
+
+	MeshFactory::AddCube(nineMesh[0], glm::vec3(-5.64f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(nineMesh[1], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(nineMesh[2], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(nineMesh[3], glm::vec3(-5.8f, 6.1f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(nineMesh[4], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(nineMesh[5], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 6; counter++) {
+		nineVAO[counter] = nineMesh[counter].Bake();
+	}
+	////////// 0 //////////
+	MeshBuilder<VertexPosCol> zeroMesh[6];
+	glm::vec3 zeroCoords[6];
+	VertexArrayObject::Sptr zeroVAO[6];
+
+	MeshFactory::AddCube(zeroMesh[0], glm::vec3(-5.64f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(zeroMesh[1], glm::vec3(-5.8f, 5.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(zeroMesh[2], glm::vec3(-6.05f, 5.92f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(zeroMesh[3], glm::vec3(-5.64f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+	MeshFactory::AddCube(zeroMesh[4], glm::vec3(-5.8f, 6.6f, .0f), glm::vec3(0.5f, 0.17f, 0.1f));
+	MeshFactory::AddCube(zeroMesh[5], glm::vec3(-6.05f, 6.44f, .0f), glm::vec3(0.17f, 0.5f, 0.1f));
+
+	for (int counter = 0; counter < 6; counter++) {
+		zeroVAO[counter] = zeroMesh[counter].Bake();
+	}
 	/////////////////////////////////////////////////// Game loop ///////////////////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -587,7 +758,6 @@ int main() {
 
 		//////////////////////// Ball Movement ////////////////////////////////
 
-
 		if (respawn == true) {
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
 		}
@@ -611,7 +781,7 @@ int main() {
 		if (bally > 8.0f)
 		{
 			respawn = true;
-			lives -= 1;
+			
 
 			ballvelx = 0;
 			ballvely = 0;
@@ -628,13 +798,6 @@ int main() {
 		{
 			paddleX = -6.25 + 1.5;
 		}
-
-		//////////////////////////////        UI        ///////////////////////////////////////////
-		if (score == 0) {
-
-		 }
-		
-		///////////////////////////////////////////////////////////////////////////////////////////
 
 		//transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
 		
@@ -701,7 +864,7 @@ int main() {
 					{
 						boxdestroyed[counter] = true;
 						//collision = true;
-						score += 100;
+						score += 1;
 
 						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
 						{
@@ -732,7 +895,7 @@ int main() {
 						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
 					{
 						boxdamaged[counter] = true;
-						score += 100;
+					
 						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
 						{
 							ballvelx *= -1.0f;
@@ -767,7 +930,7 @@ int main() {
 						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y- 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
 					{
 						boxdestroyed[counter] = true;
-						score += 100;
+						score += 1;
 						//don't draw box as it is destroyed
 						//collision = true;
 
@@ -785,8 +948,8 @@ int main() {
 					else
 					{
 						//draw damaged box
-						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[0]);
-						boxVAO[0]->Draw();
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
+						boxVAO[counter]->Draw();
 
 					}
 				}
@@ -801,8 +964,66 @@ int main() {
 			*/
 		}
 		
-		////////////////////////// Paddle Physics
+		//////////////////////////////        UI        ///////////////////////////////////////////
+		if (score % 10 == 0) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* zero);
+			for (int counter = 0; counter < 6; counter++)
+				zeroVAO[counter]->Draw();
+		}
+		if (score % 10 == 1) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* one[0]);
+			oneVAO[0]->Draw();
+		}
+		if (score % 10 == 2) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* two);
+			for (int counter = 0; counter < 5; counter++)
+				twoVAO[counter]->Draw();
+		}
+		if (score % 10 == 3) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* three);
+			for (int counter = 0; counter < 5; counter++)
+				threeVAO[counter]->Draw();
+		}
+		if (score % 10 == 4) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* four);
+			for (int counter = 0; counter < 4; counter++)
+				fourVAO[counter]->Draw();
+		}
+		if (score % 10 == 5) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* five);
+			for (int counter = 0; counter < 5; counter++)
+				fiveVAO[counter]->Draw();
+		}
+		if (score % 10 == 6) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* six);
+			for (int counter = 0; counter < 6; counter++)
+				sixVAO[counter]->Draw();
+		}
+		if (score % 10 == 7) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* seven);
+			for (int counter = 0; counter < 3; counter++)
+				sevenVAO[counter]->Draw();
+		}
+		if (score % 10 == 8) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* eight);
+			for (int counter = 0; counter < 7; counter++)
+				eightVAO[counter]->Draw();
+		}
+		if (score % 10 == 9) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* nine);
+			for (int counter = 0; counter < 6; counter++)
+				nineVAO[counter]->Draw();
+		}
+		
+		if (score >= 10) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* one[1]);
+			oneVAO[1]->Draw();
+		}
 
+		
+		///////////////////////////////////////////////////////////////////////////////////////////
+
+		////////////////////////// Paddle Physics
 
 		if (respawn != true)
 		{
@@ -847,7 +1068,23 @@ int main() {
 
 		VertexArrayObject::Unbind();
 
+		///////////////////////////////////   Life Counter   ////////////////////////////////////////////
+		if (bally <= 8 && bally >= 7.9) {
+			lives -= 1;
+		}
 
+		if (lives >= 5) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* life[2]);
+			lifeVAO[2]->Draw();
+		}
+		if (lives >= 3) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* life[1]);
+			lifeVAO[1]->Draw();
+		}
+		if (lives >= 1) {
+			shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* life[0]);
+			lifeVAO[0]->Draw();
+		}
 		//////////////////////////////////Debug Testing Zone
 
 		//std::cout << score << std::endl;
