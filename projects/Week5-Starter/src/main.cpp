@@ -23,7 +23,30 @@
 #include "Utils/ObjLoader.h"
 #include "VertexTypes.h"
 
+#include <windows.h>
+
+#include <string>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #define LOG_GL_NOTIFICATIONS
+
+unsigned char* image;
+int width, height;
+
+void loadImage(const std::string& filename) {
+	int channels;
+	stbi_set_flip_vertically_on_load(true); //because opengl loads it flipped
+
+	// Load image
+	image = stbi_load(filename.c_str(), &width, &height, &channels, 0);
+
+	if (image)
+		std::cout << "Image loaded: " << width << " x " << height << std::endl;
+	else std::cout << "Failed to load texture!!!!!" << std::endl;
+
+}
 
 /*
 	Handles debug messages from OpenGL
@@ -147,6 +170,150 @@ int main() {
 	});
 	*/
 	
+	////////////////////////// DISPLAYING SCORE //////////////////////////////
+
+	static const GLfloat points[] = {//front face, 2 triangles
+		-0.5f, -0.5f, 0.5f,//0  front face
+		0.5f, -0.5f, 0.5f, //3
+		-0.5f, 0.5f, 0.5f, //1
+		0.5f, -0.5f, 0.5f, //3
+		0.5f, 0.5f, 0.5f, //2
+		-0.5f, 0.5f, 0.5f //1
+	};
+
+	// Color data
+	static const GLfloat colors[] = {
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f
+	};
+
+	static const GLfloat normals[] = {
+		0.0f, 0.0f, 1.0f, // front
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f
+	};
+
+	static const GLfloat uv[] = {
+		//Front
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f
+	};
+
+	/// LECTURE 05
+	GLfloat cameraPos[] = { 0.0f, 0.0f, 3.0f };
+	GLfloat lightPos[] = { 0.0f, 0.0f, 3.0f };
+	////////////
+
+	GLuint pos_vbo = 0;
+	glGenBuffers(1, &pos_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+	GLuint color_vbo = 1;
+	glGenBuffers(1, &color_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
+
+	//						index, size, type, normalize?, stride, pointer
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	/////////// LECTURE 05
+	GLuint normal_vbo = 2;
+	glGenBuffers(1, &normal_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, normal_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	//////////////
+
+
+	glEnableVertexAttribArray(0);//pos
+	glEnableVertexAttribArray(1);//colors
+	/// LEC 05
+	glEnableVertexAttribArray(2);//normals
+	////////////
+
+	///////////// LETURE 07 ///////////////
+	GLuint uv_vbo = 3;
+	glGenBuffers(1, &uv_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, uv_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(3);
+
+	GLuint textureHandle[2];
+	
+
+	loadImage("metalBox.jpg");
+
+	glGenTextures(2, textureHandle);
+	glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+	//Texture Parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	//free image space
+	stbi_image_free(image);
+	/*
+	// Load our shaders
+	if (!loadShaders())
+		return 1;
+	*/
+	////////// LECTURE 04 //////////////
+
+	// Projection - FoV, aspect ratio, near, far
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+	glm::mat4 Projection = glm::perspective(glm::radians(45.0f),
+		(float)width / (float)height, 0.001f, 100.0f);
+
+	// View matrix - Camera
+
+
+	// Model matrix
+	glm::mat4 Model = glm::mat4(1.0f);//Identity matrix - resets your matrix
+
+	glm::mat4 mvp;// = Projection * View * Model;
+
+	// Handle for our mvp
+	//GLuint matrixMVP = glGetUniformLocation(shader_program, "MVP");
+	/*
+	////// LEC 05 - uniform variables
+	GLuint matrixModel = glGetUniformLocation(shader_program, "Model");
+	GLuint lightPosID = glGetUniformLocation(shader_program, "lightPos");
+	GLuint cameraPosID = glGetUniformLocation(shader_program, "cameraPos");
+	//////////////////////////////// */
+
+	// GL states
+	glEnable(GL_DEPTH_TEST);
+	// LEC 05
+	glEnable(GL_CULL_FACE);
+	//glFrontFace(GL_CCW);
+	//glCullFace(GL_FRONT); //GL_BACK, GL_FRONT_AND_BACK
+
+	
+	/////////////////////////////////////////////////////////////////////////////
+
+
 
 	///////////////Odd Definitions
 
@@ -166,7 +333,13 @@ int main() {
 	float ballvely = 0.0f;
 	float ballvelz = 0.0f;
 
-	bool box1destroyed = false; //bool condition for destroying the box
+	bool boxdestroyed[16]; //bool condition for destroying the box
+	bool boxdamaged[16]; 
+
+	for (int counter = 0; counter < 16; counter++) {
+		boxdestroyed[counter] = false;
+		boxdamaged[counter] = false;
+	}
 
 	//debug items
 	bool test1 = false;
@@ -205,32 +378,43 @@ int main() {
 	vao2->SetIndexBuffer(interleaved_ibo);
 	*/
 
+	//Texture 0
+	
 	// Load our shaders
 	Shader* shader = new Shader();
 	shader->LoadShaderPartFromFile("shaders/vertex_shader.glsl", ShaderPartType::Vertex);
 	shader->LoadShaderPartFromFile("shaders/frag_shader.glsl", ShaderPartType::Fragment);
 	shader->Link();
-
+	/*
 	// GL states, we'll enable depth testing and backface fulling
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
+	*/
 	// Get uniform location for the model view projection
 	Camera::Sptr camera = Camera::Create();
 	camera->SetPosition(glm::vec3(0, 0, 5));
 	camera->LookAt(glm::vec3(0.0f));
 	
 	//////////////////////////////////////////////////////The Place we Make objects/////////////////////////////////////
-
+	
 
 	// Create a mat4 to store our mvp (for now)
 	//glm::mat4 transform = glm::mat4(1.0f);
 	glm::mat4 paddle = glm::mat4(1.0f);
 	//glm::mat4 transform3 = glm::mat4(1.0f);
 	glm::mat4 ball = glm::mat4(1.0f);
-	glm::mat4 box1 = glm::mat4(1.0f);
+
+	///////////////////////BOXES//////////////////
+	glm::mat4 boxes[16];
+
+	for (int counter = 0; counter < 16; counter++) {
+		boxes[counter] = glm::mat4(1.0f);
+	}
+	/////////////////////////////////////////////
+
+	glm::mat4 Walls = glm::mat4(1.0f);
 
 	// Our high-precision timer
 	double lastFrame = glfwGetTime();
@@ -239,24 +423,87 @@ int main() {
 
 	
 
-	MeshBuilder<VertexPosCol> mesh;
-	MeshFactory::AddCube(mesh, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(3.0f,0.5f, 0.5f));
-	VertexArrayObject::Sptr vao3 = mesh.Bake();
+	MeshBuilder<VertexPosCol> paddleMesh;
+	MeshFactory::AddCube(paddleMesh, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(3.0f,0.5f, 0.5f));
+	VertexArrayObject::Sptr paddleVAO = paddleMesh.Bake();
+	
+	MeshBuilder<VertexPosCol> ballMesh;
+	MeshFactory::AddCube(ballMesh, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	VertexArrayObject::Sptr ballVAO = ballMesh.Bake();
+	
 
-	MeshBuilder<VertexPosCol> mesh2;
-	MeshFactory::AddCube(mesh, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-	VertexArrayObject::Sptr vao4 = mesh.Bake();
 
-	MeshBuilder<VertexPosCol> mesh3;
-	MeshFactory::AddCube(mesh, glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	VertexArrayObject::Sptr vao5 = mesh.Bake();
 
-	/// //////////////
+
+	//////////////////////////////// BOXES ///////////////////////////////
+	/* Box Map  (bracket is how many hits to destroy)
+	
+			[box0(2)]		[box1(1)]		[box2(2)]		[box3(1)]		[box4(2)]
+
+					[box5(1)]		[box6(1)]		[box7(1)]    [box8(1)]
+
+			[box9(1)]		[box10(2)]		[box11(1)]		[box12(2)]		[box13(1)]
+
+									[box14(2)]		[box15(2)]
+	
+	
+	*/
+
+	MeshBuilder<VertexPosCol> boxMesh[16];
+
+	glm::vec3 boxCoords[16];
+
+	boxCoords[0] = glm::vec3(4.0f, -5.0f, 0.0f);
+	boxCoords[1] = glm::vec3(2.0f, -5.0f, 0.0f);
+	boxCoords[2] = glm::vec3(0.0f, -5.0f, 0.0f);
+	boxCoords[3] = glm::vec3(-2.0f, -5.0f, 0.0f);
+	boxCoords[4] = glm::vec3(-4.0f, -5.0f, 0.0f);
+
+	boxCoords[5] = glm::vec3(3.0f, -4.0f, 0.0f);
+	boxCoords[6] = glm::vec3(1.0f, -4.0f, 0.0f);
+	boxCoords[7] = glm::vec3(-1.0f, -4.0f, 0.0f);
+	boxCoords[8] = glm::vec3(-3.0f, -4.0f, 0.0f);
+	
+	boxCoords[9] = glm::vec3(4.0f, -3.0f, 0.0f);
+	boxCoords[10] = glm::vec3(2.0f, -3.0f, 0.0f);
+	boxCoords[11] = glm::vec3(0.0f, -3.0f, 0.0f);
+	boxCoords[12]= glm::vec3(-2.0f, -3.0f, 0.0f);
+	boxCoords[13] = glm::vec3(-4.0f, -3.0f, 0.0f);
+
+	boxCoords[14] = glm::vec3(1.0f, -2.0f, 0.0f);
+	boxCoords[15] = glm::vec3(-1.0f, -2.0f, 0.0f);
+
+	VertexArrayObject::Sptr boxVAO[16];
+
+	for (int counter = 0; counter < 16; counter++) {
+		MeshFactory::AddCube(boxMesh[counter], boxCoords[counter], glm::vec3(1.75f, 0.5f, 0.1f));
+
+		boxVAO[counter] = boxMesh[counter].Bake();
+	}
+	/////////////////////////////// WALLS ////////////////////////////////
+
+	MeshBuilder<VertexPosCol> leftWallMesh;
+	MeshFactory::AddCube(leftWallMesh, glm::vec3(7.0f, 0.0f, 0.0f), glm::vec3(0.5f, 15.0f, 0.5f));
+	VertexArrayObject::Sptr leftWallVAO = leftWallMesh.Bake();
+
+	MeshBuilder<VertexPosCol> rightWallMesh;
+	MeshFactory::AddCube(rightWallMesh, glm::vec3(-7.0f, 0.0f, 0.0f), glm::vec3(0.5f, 15.0f, 0.5f));
+	VertexArrayObject::Sptr rightWallVAO = rightWallMesh.Bake();
+
+	MeshBuilder<VertexPosCol> ceilingMesh;
+	MeshFactory::AddCube(ceilingMesh, glm::vec3(0.0f, -7.0f, 0.0f), glm::vec3(15.0f, 0.5f, 0.5f));
+	VertexArrayObject::Sptr ceilingVAO = ceilingMesh.Bake();
+
+	
+	/////////////////
 	
 
 	/////////////////////////////////////////////////// Game loop ///////////////////////////////////////////////////////////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// WEEK 5: Input handling
 		if (glfwGetKey(window, GLFW_KEY_A)) {
@@ -302,6 +549,25 @@ int main() {
 			//isButtonPressed = false;
 		}
 
+		//***Manually reset ball for testing purposes***
+		if (glfwGetKey(window, GLFW_KEY_E)) {
+
+			if (!isButtonPressed == true) {
+				// This is the action we want to perform on key press
+				ballvelx = 0.0f;
+				ballvely = 1.0f;
+				ballvelz = 0.0f;
+				ballx = paddleX;
+				bally = 0.1f;
+			}
+			//isButtonPressed = true;
+		}
+		else {
+			//isButtonPressed = false;
+
+		}
+
+
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
 		float dt = static_cast<float>(thisFrame - lastFrame);
@@ -341,8 +607,23 @@ int main() {
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
 		}
 
+		//Keep paddle inside play space
+		if (paddleX  >= 6.26 - 1.5)
+		{
+			paddleX = 6.25 - 1.5;
+		}
+		else if (paddleX <= -6.26 + 1.5)
+		{
+			paddleX = -6.25 + 1.5;
+		}
+
+		//////////////////////////////        UI        ///////////////////////////////////////////
+		if (score == 0) {
+
+		 }
 		
-		
+		///////////////////////////////////////////////////////////////////////////////////////////
+
 		//transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
 		
 		// Clear the color and depth buffers
@@ -360,35 +641,114 @@ int main() {
 																								// bug with this part. Making a new object loads a copy of all the old objects already made. 
 																								// I guess it needs to maybe clear the old creations but idk how we do that
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* paddle);
-		vao3->Draw();
+		paddleVAO->Draw();
 
 		VertexArrayObject::Unbind();
 
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* ball);
-		vao4->Draw();
+		ballVAO->Draw();
 
 		VertexArrayObject::Unbind(); 
-		
-		
-		////// Box destory code
-		///// let it be known, i fucking hate this syntax
-		///// this was very bruh for 2 hours and like 4 lines of code
-		/////curse you coding grammer
 
-		if (box1destroyed != true)
-		{
-			if (((0.5 > ballx + 0.125 && ballx + 0.125 > -0.5) || (0.5 > ballx - 0.125 && ballx - 0.125 > -0.5)) && ((-1.5 > bally - 0.125 && bally - 0.125 > -2.5) || (-1.5 > bally + 0.125 && bally + 0.125 > 2.5)))
-			{
-				box1destroyed = true;
+
+		///////////// WALLS /////////////////
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* Walls);
+		leftWallVAO->Draw();
+		VertexArrayObject::Unbind();
+
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* Walls);
+		rightWallVAO->Draw();
+		VertexArrayObject::Unbind();
+
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * Walls);
+		ceilingVAO->Draw();
+		VertexArrayObject::Unbind();
+		/////////////////////////////////////
+		
+		//Hola Hola, as you see here I have made what I think would work as a "damaged block" system, as I have 2 bools, one indicating damaged and one indicating destroyed.  
+		//Problem is that the ball is in the hitbox of the ball for more than one frame, so it's instantly wombo combo'd for the double hit and then destroyed anyways, so I think this needs to be revisted once
+		//we figure out bouncing and get the hitboxes sitting right on the boxes.  Also side note there is obviosulyl no textures so if it was to work, it would appear that nothing happened to the box after the first hit,
+		//and then it just gets distroyed after the second
+		
+		float ballXLeft = ballx + 0.25;
+		float ballXRight = ballx - 0.25;
+		float ballYTop = bally - 0.25;
+		float ballYBottom = bally + 0.25;
+
+		for (int counter = 0; counter < 16; counter++) {
+			
+			if (counter == 1 || counter == 3 || counter == 5 || counter == 6 || counter == 7 || counter == 8 || counter == 9 || counter == 11 || counter == 13) {
+				// Normal box (destroys in one hit)
+				if (boxdestroyed[counter] != true)
+				{
+					if ((ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top left corner in brick
+						|| (ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25) //Bottom left Corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top right corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
+					{
+						boxdestroyed[counter] = true;
+					}
+					else
+					{
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
+						boxVAO[counter]->Draw();
+					}
+
+				}
 			}
-			else
-			{
-				shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* box1);
-				vao5->Draw();
+			else if (counter == 0 || counter == 2 || counter == 4 || counter == 10 || counter == 12 || counter == 14 || counter == 15) {
+				//Box type two (takes 2 hits to destroy)
+				if (boxdamaged[counter] != true)
+				{
+					if ((ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top left corner in brick
+						|| (ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25) //Bottom left Corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top right corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
+					{
+						boxdamaged[counter] = true;
+
+						//draw damaged box
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
+						boxVAO[counter]->Draw();
+					}
+					else
+					{
+						//draw undamaged box
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
+						boxVAO[counter]->Draw();
+					}
+
+				}
+				else if (boxdamaged[counter] == true && boxdestroyed[counter] != true)
+				{
+
+					if ((ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top left corner in brick
+						|| (ballXLeft > boxCoords[counter].x - 0.875 && ballXLeft < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25) //Bottom left Corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYTop > boxCoords[counter].y - 0.25 && ballYTop < boxCoords[counter].y + 0.25) //Top right corner in brick
+						|| (ballXRight > boxCoords[counter].x - 0.875 && ballXRight < boxCoords[counter].x + 0.875 && ballYBottom > boxCoords[counter].y - 0.25 && ballYBottom < boxCoords[counter].y + 0.25)) //Bottom right Corner in brick
+					{
+						boxdestroyed[counter] = true;
+						score += 100;
+						//don't draw box as it is destroyed
+					}
+					else
+					{
+						//draw damaged box
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[0]);
+						boxVAO[0]->Draw();
+
+					}
+				}
 			}
-				
+			/*
+			for (int counter = 0; counter < 16; counter++) {
+				if (boxdestroyed[counter] = false) {
+					shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[0]);
+					boxVAO[0]->Draw();
+				}
+			}
+			*/
 		}
-	
 		std::cout << test1 << std::endl;
 
 		/*
@@ -400,6 +760,11 @@ int main() {
 
 		//checking DT viability
 		//std::cout << dt << std::endl;
+
+		////// Bind texture 1
+		glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
+		///// draw 
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glfwSwapBuffers(window);
 	}
