@@ -192,7 +192,62 @@ int main() {
 		-0.5f, 0.5f, -0.5f, //5
 		-0.5f, -0.5f, 0.5f, //0
 		-0.5f, 0.5f, 0.5f,  //1
-		-0.5f, 0.5f, -0.5f //5
+		-0.5f, 0.5f, -0.5f, //5
+		0.5f, -0.5f, -0.5f, //7 back face
+		-0.5f, -0.5f, -0.5f, //4
+		0.5f, 0.5f, -0.5f, //6
+		-0.5f, -0.5f, -0.5f, //4
+		-0.5f, 0.5f, -0.5f, //5
+		0.5f, 0.5f, -0.5f, //6
+		-0.5f, 0.5f, 0.5f, //1 top face
+		0.5f, 0.5f, 0.5f, //2
+		-0.5f, 0.5f, -0.5f, //5
+		0.5f, 0.5f, 0.5f, //2
+		0.5f, 0.5f, -0.5f, //6
+		-0.5f, 0.5f, -0.5f, //5
+		-0.5f, -0.5f, -0.5f, //4 bottom face
+		0.5f, -0.5f, -0.5f, //7
+		-0.5f, -0.5f, 0.5f,//0
+		0.5f, -0.5f, -0.5f, //7
+		0.5f, -0.5f, 0.5f, //3
+		-0.5f, -0.5f, 0.5f, //0
+
+		-2.5f, -0.5f, 0.5f,//0  front face
+		-1.5f, -0.5f, 0.5f, //3
+		-2.5f, 0.5f, 0.5f, //1
+		-1.5f, -0.5f, 0.5f, //3
+		-1.5f, 0.5f, 0.5f, //2
+		-2.5f, 0.5f, 0.5f, //1
+		-1.5f, -0.5f, 0.5f, //3 Right face
+		-1.5f, -0.5f, -0.5f, //7
+		-1.5f, 0.5f, 0.5f, //2
+		-1.5f, -0.5f, -0.5f, //7
+		-1.5f, 0.5f, -0.5f, //6
+		-1.5f, 0.5f, 0.5f,  //2
+		-2.5f, -0.5f, -0.5f, //4 Left face
+		-2.5f, -0.5f, 0.5f, //0
+		-2.5f, 0.5f, -0.5f, //5
+		-2.5f, -0.5f, 0.5f, //0
+		-2.5f, 0.5f, 0.5f,  //1
+		-2.5f, 0.5f, -0.5f, //5
+		-1.5f, -0.5f, -0.5f, //7 back face
+		-2.5f, -0.5f, -0.5f, //4
+		-1.5f, 0.5f, -0.5f, //6
+		-2.5f, -0.5f, -0.5f, //4
+		-2.5f, 0.5f, -0.5f, //5
+		-1.5f, 0.5f, -0.5f, //6
+		-2.5f, 0.5f, 0.5f, //1 top face
+		-1.5f, 0.5f, 0.5f, //2
+		-2.5f, 0.5f, -0.5f, //5
+		-1.5f, 0.5f, 0.5f, //2
+		-1.5f, 0.5f, -0.5f, //6
+		-2.5f, 0.5f, -0.5f, //5
+		-2.5f, -0.5f, -0.5f, //4 bottom face
+		-1.5f, -0.5f, -0.5f, //7
+		-2.5f, -0.5f, 0.5f,//0
+		-1.5f, -0.5f, -0.5f, //7
+		-1.5f, -0.5f, 0.5f, //3
+		-2.5f, -0.5f, 0.5f //0
 
 	};
 
@@ -215,7 +270,62 @@ int main() {
 		0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f
 	};
 
 	/////// LECTURE 05 //////////
@@ -238,11 +348,129 @@ int main() {
 		-1.0f, 0.0f, 0.0f,
 		-1.0f, 0.0f, 0.0f,
 		-1.0f, 0.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f //left
+		-1.0f, 0.0f, 0.0f, //left
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f, // back
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, // top
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f, // bottom
+
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, // front
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f, //right
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f, //left
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f, // back
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, // top
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		0.0f, -1.0f, 0.0f // bottom
 	};
 
 	/////// LECTURE 07 /////////
 	static const GLfloat uv[] = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
 		0.0f, 0.0f,
 		1.0f, 0.0f,
 		0.0f, 1.0f,
@@ -272,6 +500,7 @@ int main() {
 	GLfloat lightPos[] = { 0.0f, 0.0f, 3.0f };
 	////////////
 	
+	//////////////////////////////////////////////////////////////// 
 
 	//VBO - Vertex buffer object
 	GLuint pos_vbo = 0;
@@ -292,29 +521,32 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	/////////// LECTURE 05
+	/////////// LECTURE 05 ///////////////
 	GLuint normal_vbo = 2;
 	glGenBuffers(1, &normal_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, normal_vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	//////////////
-
-
-	glEnableVertexAttribArray(0);//pos
-	glEnableVertexAttribArray(1);//colors
-	/// LEC 05
-	glEnableVertexAttribArray(2);//normals
-	////////////
-	
 	///////////// LETURE 07 ///////////////
 	GLuint uv_vbo = 3;
 	glGenBuffers(1, &uv_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, uv_vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(3);
+
+
+	//////////////
+
+	glEnableVertexAttribArray(0);//pos
+	glEnableVertexAttribArray(1);//colors
+	glEnableVertexAttribArray(2);//normals
+	glEnableVertexAttribArray(3); // uv
+
+	////////////
+	
+	
+
 
 	/*																					// currently not in use or set up
 	loadImage("box.bmp");
@@ -369,7 +601,7 @@ int main() {
 	// View matrix - Camera
 
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(0, 0, 5), // camera position
+		glm::vec3(0, 2, 10), // camera position
 		glm::vec3(0, 0, 0), //target
 		glm::vec3(0, 1, 0) //up vector
 	);
@@ -519,9 +751,11 @@ int main() {
 		///// Bind texture 2
 		///// draw
 
-		glDrawArrays(GL_TRIANGLES, 0, 18); //36
-
+		glDrawArrays(GL_TRIANGLES, 0, 36); //36
+		glDrawArrays(GL_TRIANGLES, 36, 36);
 		
+		
+
 		glfwSwapBuffers(window);
 	}
 	return 0;
