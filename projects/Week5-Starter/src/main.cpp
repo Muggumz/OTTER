@@ -903,8 +903,8 @@ int main() {
 		}
 		else
 		{
-			ballx -= (ballvelx/25)*((score + 4) /4);
-			bally -= (ballvely/25)*((score + 4) /4);
+			ballx -= (ballvelx / 25)*((score + 4) / 4);
+			bally -= (ballvely / 25)*((score + 4) / 4);
 			ballz -= ballvelz/25;
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx, bally, ballz));
 		}
@@ -990,8 +990,8 @@ int main() {
 		
 		float ballXLeft = ballx + 0.25;
 		float ballXRight = ballx - 0.25;
-		float ballYTop = bally + 1.75f;
-		float ballYBottom = bally + 1.5f;
+		float ballYTop = bally + 2.25f;
+		float ballYBottom = bally + 1.75f;
 
 		/////////////////////////////////////////////////// Box Physics
 
@@ -1010,12 +1010,11 @@ int main() {
 						//collision = true;
 						score += 1;
 
-						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
+						if (ballXLeft > boxCoords[counter].x + 0.875 || ballXRight < boxCoords[counter].x - 0.875)
 						{
 							ballvelx *= -1.0f;
 						}
-
-						if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
+						else if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
 						{
 							ballvely *= -1.0f;
 						}
@@ -1050,12 +1049,11 @@ int main() {
 					{
 						boxdamaged[counter] = true;
 					
-						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
+						if (ballXLeft > boxCoords[counter].x + 0.875 || ballXRight < boxCoords[counter].x - 0.875)
 						{
 							ballvelx *= -1.0f;
 						}
-
-						if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
+						else if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
 						{
 							ballvely *= -1.0f;
 						}
@@ -1132,12 +1130,11 @@ int main() {
 						//don't draw box as it is destroyed
 						//collision = true;
 
-						if (ballXLeft < boxCoords[counter].x - 0.875 || ballXRight > boxCoords[counter].x + 0.875)
+						if (ballXLeft > boxCoords[counter].x + 0.875 || ballXRight < boxCoords[counter].x - 0.875)
 						{
 							ballvelx *= -1.0f;
 						}
-
-						if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
+						else if (ballYTop > boxCoords[counter].y + 0.25 || ballYBottom < boxCoords[counter].y + 0.25)
 						{
 							ballvely *= -1.0f;
 						}
