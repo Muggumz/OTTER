@@ -142,25 +142,38 @@ int main() {
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GlDebugMessage, nullptr);
-	/*
+	
 	static const GLfloat points[] = {
-		-0.5f, -0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f
+		-0.875f, -0.25f, 0.1f,//0  front face
+		0.875f, -0.25f, 0.1f, //3
+		-0.875f, 0.25f, 0.1f, //1
+		0.875f, -0.25f, 0.1f, //3
+		0.875f, 0.25f, 0.1f, //2
+		-0.875f, 0.25f, 0.1f //1
 	};
 
 	static const GLfloat colors[] = {
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f
 	};
+
+	static const uint16_t indices2[] = {
+		3, 0 ,1,
+		3, 1, 2
+	};
+	IndexBuffer::Sptr points_ibo = IndexBuffer::Create();
+	points_ibo->LoadData(indices2, 3 * 2);
 
 	//VBO - Vertex buffer object
 	VertexBuffer::Sptr posVbo = VertexBuffer::Create();
-	posVbo->LoadData(points, 9);
+	posVbo->LoadData(points, 18);
 
 	VertexBuffer::Sptr color_vbo = VertexBuffer::Create();
-	color_vbo->LoadData(colors, 9);
+	color_vbo->LoadData(colors, 18);
 
 	VertexArrayObject::Sptr vao = VertexArrayObject::Create();
 	vao->AddVertexBuffer(posVbo, {
@@ -169,17 +182,22 @@ int main() {
 	vao->AddVertexBuffer(color_vbo, {
 		{ 1, 3, AttributeType::Float, 0, NULL, AttribUsage::Color }
 	});
-	*/
+	vao->SetIndexBuffer(points_ibo);
+	
 	
 	////////////////////////// DISPLAYING SCORE //////////////////////////////
-
+	/*
 	static const GLfloat points[] = {//front face, 2 triangles
-		-0.5f, -0.5f, 0.5f,//0  front face
-		0.5f, -0.5f, 0.5f, //3
-		-0.5f, 0.5f, 0.5f, //1
-		0.5f, -0.5f, 0.5f, //3
-		0.5f, 0.5f, 0.5f, //2
-		-0.5f, 0.5f, 0.5f //1
+		-0.875f, -0.25f, 0.1f,//0  front face
+		0.875f, -0.25f, 0.1f, //3
+		-0.875f, 0.25f, 0.1f, //1
+		0.875f, -0.25f, 0.1f, //3
+		0.875f, 0.25f, 0.1f, //2
+		-0.875f, 0.25f, 0.1f //1
+
+		/// box[0]
+
+
 	};
 
 	// Color data
@@ -257,6 +275,7 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(3);
+	*/
 
 	GLuint textureHandle[2];
 	
@@ -938,6 +957,8 @@ int main() {
 						//draw undamaged box
 						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
 						boxVAO[counter]->Draw();
+
+						
 					}
 
 				}
@@ -1126,7 +1147,10 @@ int main() {
 		////// Bind texture 1
 		glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
 		///// draw 
+
+		vao->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+		vao->Unbind();
 
 		glfwSwapBuffers(window);
 	}
