@@ -144,15 +144,130 @@ int main() {
 	glDebugMessageCallback(GlDebugMessage, nullptr);
 	
 	static const GLfloat points[] = {
-		-0.875f, -0.25f, 0.1f,//0  front face
-		0.875f, -0.25f, 0.1f, //3
-		-0.875f, 0.25f, 0.1f, //1
-		0.875f, -0.25f, 0.1f, //3
-		0.875f, 0.25f, 0.1f, //2
-		-0.875f, 0.25f, 0.1f //1
+		//-0.875f, -0.25f, 0.1f,//0  front face
+		//0.875f, -0.25f, 0.1f, //3
+		//-0.875f, 0.25f, 0.1f, //1
+		//0.875f, -0.25f, 0.1f, //3
+		//0.875f, 0.25f, 0.1f, //2
+		//-0.875f, 0.25f, 0.1f, //1
+
+		///// box[0]
+		3.125f, -5.25f, 0.1f,
+		4.875f, -5.25f, 0.1f,
+		3.125f, -4.75f, 0.1f,
+		4.875f, -5.25f, 0.1f,
+		4.875f, -4.75f, 0.1f,
+		3.125f, -4.75f, 0.1f,
+
+		///// box[2]
+
+		-0.875f, -5.25f, 0.1f,
+		0.875f, -5.25f, 0.1f,
+		-0.875f, -4.75f, 0.1f,
+		0.875f, -5.25f, 0.1f,
+		0.875f, -4.75f, 0.1f,
+		-0.875f, -4.75f, 0.1f,
+
+		///// box[4]
+		-4.875f, -5.25f, 0.1f,
+		-3.125f, -5.25f, 0.1f,
+		-4.875f, -4.75f, 0.1f,
+		-3.125f, -5.25f, 0.1f,
+		-3.125f, -4.75f, 0.1f,
+		-4.875f, -4.75f, 0.1f,
+
+		///// box[10]
+
+		1.125f, -3.25f, 0.1f,
+		2.875f, -3.25f, 0.1f,
+		1.125f, -2.75f, 0.1f,
+		2.875f, -3.25f, 0.1f,
+		2.875f, -2.75f, 0.1f,
+		1.125f, -2.75f, 0.1f,
+
+		///// box[12]
+
+		-2.875f, -3.25f, 0.1f,
+		-1.125f, -3.25f, 0.1f,
+		-2.875f, -2.75f, 0.1f,
+		-1.125f, -3.25f, 0.1f,
+		-1.125f, -2.75f, 0.1f,
+		-2.875f, -2.75f, 0.1f,
+
+		///// box [14]
+
+		0.125f, -2.25f, 0.1f,
+		1.875f, -2.25f, 0.1f,
+		0.125f, -1.75f, 0.1f,
+		1.875f, -2.25f, 0.1f,
+		1.875f, -1.75f, 0.1f,
+		0.125f, -1.75f, 0.1f,
+
+		////// box [15]
+
+		-1.875f, -2.25f, 0.1f,
+		-0.125f, -2.25f, 0.1f,
+		-1.875f, -1.75f, 0.1f,
+		-0.125f, -2.25f, 0.1f,
+		-0.125f, -1.75f, 0.1f,
+		-1.875f, -1.75f, 0.1f
+
+
 	};
 
 	static const GLfloat colors[] = {
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+
+		///
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		//
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		//
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+
+		//
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		//
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+
+		//
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		//
 		1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
@@ -170,10 +285,10 @@ int main() {
 
 	//VBO - Vertex buffer object
 	VertexBuffer::Sptr posVbo = VertexBuffer::Create();
-	posVbo->LoadData(points, 18);
+	posVbo->LoadData(points, 144);
 
 	VertexBuffer::Sptr color_vbo = VertexBuffer::Create();
-	color_vbo->LoadData(colors, 18);
+	color_vbo->LoadData(colors, 144);
 
 	VertexArrayObject::Sptr vao = VertexArrayObject::Create();
 	vao->AddVertexBuffer(posVbo, {
@@ -958,7 +1073,49 @@ int main() {
 						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
 						boxVAO[counter]->Draw();
 
-						
+						if (counter == 0)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 0, 6);
+							vao->Unbind();
+						}
+						else if (counter == 2)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 6, 6);
+							vao->Unbind();
+						}
+						else if (counter == 4)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 12, 6);
+							vao->Unbind();
+						}
+						else if (counter == 10)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 18, 6);
+							vao->Unbind();
+						}
+						else if (counter == 12)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 24, 6);
+							vao->Unbind();
+
+						}
+						else if (counter == 14)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 30, 6);
+							vao->Unbind();
+						}
+						else if (counter == 15)
+						{
+							vao->Bind();
+							glDrawArrays(GL_TRIANGLES, 36, 6);
+							vao->Unbind();
+						}
 					}
 
 				}
@@ -1148,9 +1305,9 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
 		///// draw 
 
-		vao->Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		vao->Unbind();
+		//vao->Bind();
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
+		//vao->Unbind();
 
 		glfwSwapBuffers(window);
 	}
