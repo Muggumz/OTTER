@@ -184,12 +184,12 @@ int main() {
 
 	// Color data
 	static const GLfloat colors[] = {
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f
 	};
 
 	static const GLfloat normals[] = {
@@ -357,10 +357,10 @@ int main() {
 	
 	static const float interleaved[] = {
 		// X      Y    Z       R     G     B
-		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 0.0f,
-		 0.5f,  0.5f, 0.5f,   0.3f, 0.2f, 0.5f,
-		-0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f,   1.0f, 1.0f, 1.0f
+		 0.875f, -0.25f, 0.1f,   1.0f, 0.0f, 0.0f,
+		 0.875f,  0.25f, 0.1f,   1.0f, 0.0f, 0.0f,
+		-0.875f,  0.25f, 0.1f,   1.0f, 0.0f, 0.0f,
+		-0.875f, -0.25f, 0.1f,   1.0f, 0.0f, 0.0f
 	};
 	VertexBuffer::Sptr interleaved_vbo = VertexBuffer::Create();
 	interleaved_vbo->LoadData(interleaved, 6 * 4);
@@ -422,6 +422,12 @@ int main() {
 
 	for (int counter = 0; counter < 16; counter++) {
 		boxes[counter] = glm::mat4(1.0f);
+	}
+
+	glm::mat4 boxText[16];
+
+	for (int counter = 0; counter < 16; counter++) {
+		boxText[counter] = glm::mat4(1.0f);
 	}
 	/////////////////////////////////////////////
 
@@ -763,8 +769,8 @@ int main() {
 		}
 		else
 		{
-			ballx -= ballvelx/25;
-			bally -= ballvely/25;
+			ballx -= (ballvelx/25)*((score + 4) /4);
+			bally -= (ballvely/25)*((score + 4) /4);
 			ballz -= ballvelz/25;
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx, bally, ballz));
 		}
@@ -780,13 +786,17 @@ int main() {
 		//// respawn condition and code
 		if (bally > 8.0f)
 		{
-			respawn = true;
-			
+			if (lives > 0)
+			{
+				respawn = true;
 
-			ballvelx = 0;
-			ballvely = 0;
-			ballvelz = 0;
-			ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
+
+				ballvelx = 0;
+				ballvely = 0;
+				ballvelz = 0;
+				ball = glm::translate(glm::mat4(1.0f), glm::vec3(paddleX, 1.0f, 0.0f));
+			}
+			
 		}
 
 		//Keep paddle inside play space
@@ -881,6 +891,16 @@ int main() {
 					{
 						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
 						boxVAO[counter]->Draw();
+
+						VertexArrayObject::Unbind();
+
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* boxText[counter]);
+						vao2->Bind();
+						glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), (GLenum)interleaved_ibo->GetElementType(), nullptr);
+
+						boxText[counter] = glm::translate(glm::mat4(1.0f), boxCoords[counter]);
+
+						VertexArrayObject::Unbind();
 					}
 
 				}
@@ -950,6 +970,16 @@ int main() {
 						//draw damaged box
 						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
 						boxVAO[counter]->Draw();
+
+						VertexArrayObject::Unbind();
+
+						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* boxText[counter]);
+						vao2->Bind();
+						glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), (GLenum)interleaved_ibo->GetElementType(), nullptr);
+
+						boxText[counter] = glm::translate(glm::mat4(1.0f), boxCoords[counter]);
+
+						VertexArrayObject::Unbind();
 
 					}
 				}
@@ -1059,7 +1089,7 @@ int main() {
 		// Draw OBJ loaded model
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform3);
 		vao4->Draw();
-		*/
+		
 		VertexArrayObject::Unbind();
 		
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* test);
@@ -1067,7 +1097,7 @@ int main() {
 		glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), (GLenum)interleaved_ibo->GetElementType(), nullptr);
 
 		VertexArrayObject::Unbind();
-
+		*/
 		///////////////////////////////////   Life Counter   ////////////////////////////////////////////
 		if (bally <= 8 && bally >= 7.9) {
 			lives -= 1;
