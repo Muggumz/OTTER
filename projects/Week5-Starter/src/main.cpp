@@ -210,8 +210,16 @@ int main() {
 		-1.875f, -1.75f, 0.1f,
 		-0.125f, -2.25f, 0.1f,
 		-0.125f, -1.75f, 0.1f,
-		-1.875f, -1.75f, 0.1f
+		-1.875f, -1.75f, 0.1f,
 
+		//left wall
+
+		6.75f, -7.0f, 0.6f,
+		7.25f, -7.0f, 0.6f,
+		6.75f, 7.0f, 0.6f,
+		7.25f, -7.0f, 0.6f,
+		7.25f, 7.0f, 0.6f,
+		6.75f, 7.0f, 0.6f
 
 	};
 
@@ -273,7 +281,15 @@ int main() {
 		1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f
+		1.0f, 1.0f, 0.0f,
+
+		//
+		 0.435294f, 0.258824f, 0.258824f,
+		 0.435294f, 0.258824f, 0.258824f,
+		 0.435294f, 0.258824f, 0.258824f,
+		 0.435294f, 0.258824f, 0.258824f,
+		 0.435294f, 0.258824f, 0.258824f,
+		 0.435294f, 0.258824f, 0.258824f
 	};
 
 	static const uint16_t indices2[] = {
@@ -285,10 +301,10 @@ int main() {
 
 	//VBO - Vertex buffer object
 	VertexBuffer::Sptr posVbo = VertexBuffer::Create();
-	posVbo->LoadData(points, 144);
+	posVbo->LoadData(points, 180);
 
 	VertexBuffer::Sptr color_vbo = VertexBuffer::Create();
-	color_vbo->LoadData(colors, 144);
+	color_vbo->LoadData(colors, 180);
 
 	VertexArrayObject::Sptr vao = VertexArrayObject::Create();
 	vao->AddVertexBuffer(posVbo, {
@@ -301,96 +317,7 @@ int main() {
 	
 	
 	////////////////////////// DISPLAYING SCORE //////////////////////////////
-	/*
-	static const GLfloat points[] = {//front face, 2 triangles
-		-0.875f, -0.25f, 0.1f,//0  front face
-		0.875f, -0.25f, 0.1f, //3
-		-0.875f, 0.25f, 0.1f, //1
-		0.875f, -0.25f, 0.1f, //3
-		0.875f, 0.25f, 0.1f, //2
-		-0.875f, 0.25f, 0.1f //1
-
-		/// box[0]
-
-
-	};
-
-	// Color data
-	static const GLfloat colors[] = {
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f
-	};
-
-	static const GLfloat normals[] = {
-		0.0f, 0.0f, 1.0f, // front
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f
-	};
-
-	static const GLfloat uv[] = {
-		//Front
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 1.0f
-	};
-
-	/// LECTURE 05
-	GLfloat cameraPos[] = { 0.0f, 0.0f, 3.0f };
-	GLfloat lightPos[] = { 0.0f, 0.0f, 3.0f };
-	////////////
-
-	GLuint pos_vbo = 0;
-	glGenBuffers(1, &pos_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-
-	GLuint color_vbo = 1;
-	glGenBuffers(1, &color_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
-
-	//						index, size, type, normalize?, stride, pointer
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	/////////// LECTURE 05
-	GLuint normal_vbo = 2;
-	glGenBuffers(1, &normal_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, normal_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	//////////////
-
-
-	glEnableVertexAttribArray(0);//pos
-	glEnableVertexAttribArray(1);//colors
-	/// LEC 05
-	glEnableVertexAttribArray(2);//normals
-	////////////
-
-	///////////// LETURE 07 ///////////////
-	GLuint uv_vbo = 3;
-	glGenBuffers(1, &uv_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, uv_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(3);
-	*/
+	
 
 	GLuint textureHandle[2];
 	
@@ -431,12 +358,12 @@ int main() {
 
 	// Handle for our mvp
 	//GLuint matrixMVP = glGetUniformLocation(shader_program, "MVP");
-	/*
+	
 	////// LEC 05 - uniform variables
-	GLuint matrixModel = glGetUniformLocation(shader_program, "Model");
-	GLuint lightPosID = glGetUniformLocation(shader_program, "lightPos");
-	GLuint cameraPosID = glGetUniformLocation(shader_program, "cameraPos");
-	//////////////////////////////// */
+	//GLuint matrixModel = glGetUniformLocation(shader_program, "Model");
+	//GLuint lightPosID = glGetUniformLocation(shader_program, "lightPos");
+	//GLuint cameraPosID = glGetUniformLocation(shader_program, "cameraPos");
+	//////////////////////////////// 
 
 	// GL states
 	glEnable(GL_DEPTH_TEST);
@@ -908,14 +835,7 @@ int main() {
 			ballz -= ballvelz/25;
 			ball = glm::translate(glm::mat4(1.0f), glm::vec3(ballx, bally, ballz));
 		}
-					///////collision pass 1
-		/*
-		if (collision == true) {
-			ballvelx *= -1;
-			ballvely *= -1;
-			collision = false;
-		}
-		*/
+					
 		
 		//// respawn condition and code
 		if (bally > 8.0f)
@@ -942,19 +862,12 @@ int main() {
 		{
 			paddleX = -6.25 + 1.5;
 		}
-
-		//transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
-		
 		// Clear the color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Bind our shader and upload the uniform
 		shader->Bind();
-		/*
-		// Draw spinny triangle
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform);
-		vao->Draw();
-		*/
+
 		// Draw MeshFactory Sample
 
 																								
@@ -983,11 +896,6 @@ int main() {
 		VertexArrayObject::Unbind();
 		/////////////////////////////////////
 
-		//Yo mon ami, it would appear that the ball does not quite visually match where it actually is in code, that or the blocks do not. I've adjusted some code in the back end.
-		//This way the ball believes it is elsewhere to match the boxes being straaangely out of place. Im thinking the boxes may be the strange ones in this scenario.
-		//Either way it looks much better now.
-		////Boxes can have two lives but they currently have no texture or model and are thus invisibruh, however they currently generate a texture at box[0] (since thats what they do)
-		
 		float ballXLeft = ballx + 0.25;
 		float ballXRight = ballx - 0.25;
 		float ballYTop = bally + 2.25f;
@@ -1057,13 +965,6 @@ int main() {
 						{
 							ballvely *= -1.0f;
 						}
-
-
-						/*
-						//draw damaged box
-						shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[counter]);
-						boxVAO[counter]->Draw();
-						*/
 					}
 					else
 					{
@@ -1159,14 +1060,7 @@ int main() {
 					}
 				}
 			}
-			/*
-			for (int counter = 0; counter < 16; counter++) {
-				if (boxdestroyed[counter] = false) {
-					shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * boxes[0]);
-					boxVAO[0]->Draw();
-				}
-			}
-			*/
+			
 		}
 		
 		//////////////////////////////        UI        ///////////////////////////////////////////
@@ -1292,19 +1186,10 @@ int main() {
 		}
 		//////////////////////////////////Debug Testing Zone
 
-		//std::cout << score << std::endl;
-		//std::cout << ballYTop << std::endl;
-
-		//std::cout << boxCoords[9].y << std::endl;
-
 		///////////////////////////////////////
 		////// Bind texture 1
 		glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
 		///// draw 
-
-		//vao->Bind();
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		//vao->Unbind();
 
 		glfwSwapBuffers(window);
 	}
